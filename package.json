@@ -1,0 +1,10 @@
+{
+  "name": "atom-language-dust",
+  "version": "0.0.1",
+  "description": "Dust.js template support in Atom",
+  "repository": "https://github.com/sethkinast/atom-language-dust.git",
+  "license": "MIT",
+  "engines": {
+    "atom": ">=0.174.0 <2.0.0"
+  }
+}
