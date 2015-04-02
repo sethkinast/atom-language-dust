@@ -1,0 +1,48 @@
+fileTypes: [
+  'dust'
+]
+name: 'HTML (Dust)'
+scopeName: 'text.html.dust'
+
+patterns: [
+  {
+    include: '#comment'
+  }
+  {
+    include: '#reference'
+  }
+  {
+    include: 'text.html.basic'
+  }
+]
+
+repository:
+  reference:
+    match: '\\{([\\.A-z_$][\\.A-z0-9_$]*)(\\|[A-z]+)?\\}'
+    captures:
+      1:
+        name: 'variable.other.reference_name'
+      2:
+        name: 'support.constant.filter'
+    name: 'variable.other.reference'
+  comment:
+    begin: '\\{!'
+    end: '!\\}'
+    name: 'comment.block.dust'
+  identifier:
+    patterns: [
+      {
+        include: '#dust_key'
+      }
+      {
+        include: '#dust_path'
+      }
+    ]
+  key:
+    match: '[A-z_$][A-z0-9_$]*'
+  literal:
+    match: '[^"]*'
+  path:
+    match: '[A-z0-9_$\.]+'
+  special:
+    match: '\{\~[A-z]\}'
