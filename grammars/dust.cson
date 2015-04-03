@@ -9,7 +9,22 @@ patterns: [
     include: '#comment'
   }
   {
-    include: '#tag'
+    include: '#reference'
+  }
+  {
+    include: '#section_start'
+  }
+  {
+    include: '#section_end'
+  }
+  {
+    include: '#block'
+  }
+  {
+    include: '#partial'
+  }
+  {
+    include: '#special'
   }
   {
     include: 'text.html.basic'
@@ -17,45 +32,18 @@ patterns: [
 ]
 
 repository:
-  tag:
-    comment: 'Attempts to match all valid Dust {tags}'
-    match: '\\{([#?^<>+@%~`\\/:]?[\\.A-Za-zA-Za-z_$"].*)\\}'
-    captures:
-      0:
-        patterns: [
-          {
-            include: '#reference'
-          }
-          {
-            include: '#section_start'
-          }
-          {
-            include: '#section_end'
-          }
-          {
-            include: '#block'
-          }
-          {
-            include: '#partial'
-          }
-        ]
-    name: 'meta.tag.dust'
   reference:
-    match: '(\\{)([\\.A-Za-z_$][\\.A-Za-z0-9_$]*)((?:\\|[A-Za-z]+)*)(\\})'
+    match: '\\{([\\.A-Za-z_$][\\.A-Za-z0-9_$-]*)((?:\\|[A-Za-z]+)*)\\}'
     name: 'variable.other.reference.dust'
     captures:
-      2:
+      1:
         patterns: [
           include: '#identifier'
         ]
-      3:
+      2:
         patterns: [
           include: '#filter'
         ]
-      1:
-        name: 'meta.brace.start.dust'
-      4:
-        name: 'meta.brace.end.dust'
   section_start:
     name: 'keyword.control.section.start.dust'
     begin: '\\{([#?^<+@%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*)(:[A-Za-z0-9_$]+)?'
@@ -80,7 +68,7 @@ repository:
         name: 'keyword.control.section.identifier.dust'
   block:
     match: '\\{:([A-Za-z_$][A-Za-z0-9_$]*)\\}'
-    name: 'keyword.control.block.dust'
+    name: 'storage.block.dust'
   partial:
     name: 'keyword.control.partial.dust'
     match: '\\{>\\s*((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|(?:[A-Za-z_$][A-Za-z0-9_$-]*))(:[A-Za-z0-9_$]+)?(.*)\\/\\}'
@@ -104,6 +92,9 @@ repository:
   identifier:
     patterns: [
       {
+        include: '#helper'
+      }
+      {
         include: '#control'
       }
       {
@@ -113,22 +104,23 @@ repository:
         include: '#path'
       }
     ]
+  helper:
+    match: '@\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    name: 'keyword.other.special-method.linkedin.pre.dust'
   control:
-    match: '[#?^<+@%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    match: '[#?^<+%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
     name: 'keyword.control.section.identifier.dust'
   key:
     match: '[A-Za-z_$][A-Za-z0-9_$]*'
     name: 'variable.other.identifier.dust'
-  #literal:
-  #  match: '[^"\\\\]*(?:\\.[^"\\\\]*)*'
   number:
-    'match': '-?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?([eE][+-]?\\d+)?'
+    'match': '-?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?'
     'name': 'constant.numeric.dust'
   path:
     match: '[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
     name: 'variable.other.identifier.dust'
   special:
-    match: '\\{\\~[A-Za-z]\\}'
+    match: '\\{\\~[A-Za-z]+\\}'
     name: 'support.constant.special'
   filter:
     match: '\\|[A-Za-z]+'
@@ -157,9 +149,7 @@ repository:
     match: '([A-Za-z_$][A-Za-z0-9_$]*)(=)((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|[\\-\\.A-Za-z0-9_$^"]+)'
     captures:
       1:
-        patterns: [
-          include: '#key'
-        ]
+        name: 'entity.other.attribute-name.dust'
       2:
         name: 'keyword.operator'
       3:
