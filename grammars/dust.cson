@@ -9,13 +9,7 @@ patterns: [
     include: '#comment'
   }
   {
-    include: '#reference'
-  }
-  {
-    include: '#section_start'
-  }
-  {
-    include: '#section_end'
+    include: '#tag'
   }
   {
     include: 'text.html.basic'
@@ -23,24 +17,52 @@ patterns: [
 ]
 
 repository:
-  reference:
-    match: '\\{([\\.A-z_$][\\.A-z0-9_$]*)(\\|[A-z]+)?\\}'
+  tag:
+    comment: 'Attempts to match all valid Dust {tags}'
+    match: '\\{([#?^<>+@%~`\\/:]?[\\.A-Za-zA-Za-z_$"].*)\\}'
     captures:
-      1:
+      0:
+        patterns: [
+          {
+            include: '#reference'
+          }
+          {
+            include: '#section_start'
+          }
+          {
+            include: '#section_end'
+          }
+          {
+            include: '#block'
+          }
+          {
+            include: '#partial'
+          }
+        ]
+    name: 'meta.tag.dust'
+  reference:
+    match: '(\\{)([\\.A-Za-z_$][\\.A-Za-z0-9_$]*)((?:\\|[A-Za-z]+)*)(\\})'
+    name: 'variable.other.reference.dust'
+    captures:
+      2:
         patterns: [
           {
             include: '#identifier'
           }
         ]
-      2:
+      3:
         patterns: [
           {
             include: '#filter'
           }
         ]
-    name: 'entity.name.tag'
+      1:
+        name: 'meta.brace.start.dust'
+      4:
+        name: 'meta.brace.end.dust'
   section_start:
-    begin: '\\{([#?^<+@%]\\s*[\\.A-z_$][\\.A-z0-9_$]*)(:[A-z0-9_$]+)?'
+    name: 'keyword.control.section.start.dust'
+    begin: '\\{([#?^<+@%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*)(:[A-Za-z0-9_$]+)?'
     beginCaptures:
       1:
         patterns: [
@@ -68,13 +90,37 @@ repository:
         include: '#param'
       }
     ]
-    name: 'entity.name.tag.section.start.dust'
   section_end:
-    match: '\\{\\s*\\/\\s*([\\.A-z_$][\\.A-z0-9_$]*)\\}'
-    name: 'entity.name.tag.section.end.dust'
+    match: '\\{\\s*\\/\\s*([\\.A-Za-z_$][\\.A-Za-z0-9_$]*)\\}'
+    name: 'keyword.control.section.end.dust'
     captures:
       1:
-        name: 'entity.name.function.dust'
+        name: 'keyword.control.section.identifier.dust'
+  block:
+    match: '\\{:([A-Za-z_$][A-Za-z0-9_$]*)\\}'
+    name: 'keyword.control.block.dust'
+  partial:
+    name: 'keyword.control.partial.dust'
+    match: '\\{>\\s*((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|(?:[A-Za-z_$][A-Za-z0-9_$-]*))(:[A-Za-z0-9_$]+)?(.*)\\/\\}'
+    captures:
+      1:
+        patterns: [
+          {
+            include: '#inline'
+          }
+        ]
+      2:
+        patterns: [
+          {
+            include: '#context'
+          }
+        ]
+      3:
+        patterns: [
+          {
+            include: '#param'
+          }
+        ]
   comment:
     begin: '\\{!'
     end: '!\\}'
@@ -92,27 +138,27 @@ repository:
       }
     ]
   control:
-    match: '[#?^<+@%]\\s*[\\.A-z_$][\\.A-z0-9_$]*'
-    name: 'entity.name.function.dust'
+    match: '[#?^<+@%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    name: 'keyword.control.section.identifier.dust'
   key:
-    match: '[A-z_$][A-z0-9_$]*'
-    name: 'variable.other.identifier'
+    match: '[A-Za-z_$][A-Za-z0-9_$]*'
+    name: 'variable.other.identifier.dust'
   #literal:
   #  match: '[^"\\\\]*(?:\\.[^"\\\\]*)*'
   number:
     'match': '-?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?([eE][+-]?\\d+)?'
     'name': 'constant.numeric.dust'
   path:
-    match: '[\\.A-z_$][\\.A-z0-9_$]*'
-    name: 'variable.other.identifier'
+    match: '[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    name: 'variable.other.identifier.dust'
   special:
-    match: '\\{\\~[A-z]\\}'
+    match: '\\{\\~[A-Za-z]\\}'
     name: 'support.constant.special'
   filter:
-    match: '\\|[A-z]+'
+    match: '\\|[A-Za-z]+'
     name: 'support.constant.filter'
   context:
-    match: ':[A-z0-9_$]+'
+    match: ':[A-Za-z0-9_$]+'
     name: 'variable.parameter.context'
   inline:
     match: '(")([^"\\\\]*(?:\\\\.[^"\\\\]*)*)(")' # http://stackoverflow.com/a/5696141/938516
@@ -132,7 +178,7 @@ repository:
         name: 'punctuation.definition.string.end'
     name: 'string.quoted.double.inline'
   param:
-    match: '([A-z_$][A-z0-9_$]*)(=)((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|[\\-\\.A-z0-9_$^"]+)'
+    match: '([A-Za-z_$][A-Za-z0-9_$]*)(=)((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|[\\-\\.A-Za-z0-9_$^"]+)'
     captures:
       1:
         patterns: [
