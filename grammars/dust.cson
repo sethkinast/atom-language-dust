@@ -1,5 +1,6 @@
 fileTypes: [
   'dust'
+  'tl'
 ]
 name: 'HTML (Dust)'
 scopeName: 'text.html.dust'
@@ -33,7 +34,8 @@ patterns: [
 
 repository:
   reference:
-    match: '\\{([\\.A-Za-z_$][\\.A-Za-z0-9_$-]*)((?:\\|[A-Za-z]+)*)\\}'
+    comment: 'Simple references like {foo} and {foo.bar} and {foo.bar:context}'
+    match: '\\{([\\.A-Za-z_$][\\.A-Za-z0-9_$\\[\\]-]*)((?:\\|[A-Za-z]+)*)\\}'
     name: 'variable.other.reference.dust'
     captures:
       1:
@@ -45,8 +47,9 @@ repository:
           include: '#filter'
         ]
   section_start:
+    comment: 'Start of sections like {#foo:context ... /}'
     name: 'keyword.control.section.start.dust'
-    begin: '\\{([#?^<+@%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*)(:[A-Za-z0-9_$]+)?'
+    begin: '\\{([#?^<+@%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$\\[\\]-]*)(:[A-Za-z0-9_$]+)?'
     beginCaptures:
       1:
         patterns: [
@@ -61,15 +64,18 @@ repository:
       include: '#param'
     ]
   section_end:
+    comment: 'End of sections like {/foo}'
     match: '\\{\\s*\\/\\s*([\\.A-Za-z_$][\\.A-Za-z0-9_$]*)\\}'
     name: 'keyword.control.section.end.dust'
     captures:
       1:
         name: 'keyword.control.section.identifier.dust'
   block:
+    comment: 'Block identifiers like {:else}'
     match: '\\{:([A-Za-z_$][A-Za-z0-9_$]*)\\}'
     name: 'storage.block.dust'
   partial:
+    comment: 'Partials like {>foo/} and {>"foo/{bar}"/} and {>foo:context/}'
     name: 'keyword.control.partial.dust'
     match: '\\{>\\s*((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|(?:[A-Za-z_$][A-Za-z0-9_$-]*))(:[A-Za-z0-9_$]+)?(.*)\\/\\}'
     captures:
@@ -86,10 +92,12 @@ repository:
           include: '#param'
         ]
   comment:
+    comment: 'Greedily absorbs {! comments !}'
     begin: '\\{!'
     end: '!\\}'
     name: 'comment.block.dust'
   identifier:
+    comment: 'Identifiers are a subsection of tags like @helper, #section, ref, pa.th'
     patterns: [
       {
         include: '#helper'
@@ -105,30 +113,38 @@ repository:
       }
     ]
   helper:
-    match: '@\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    comment: 'Helper identifiers like @helper'
+    match: '@\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$-]*'
     name: 'keyword.other.special-method.linkedin.pre.dust'
   control:
-    match: '[#?^<+%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    comment: 'Control identifiers like #section ?exists ^nexists +block'
+    match: '[#?^<+%]\\s*[\\.A-Za-z_$][\\.A-Za-z0-9_$\\[\\]-]*'
     name: 'keyword.control.section.identifier.dust'
   key:
-    match: '[A-Za-z_$][A-Za-z0-9_$]*'
+    comment: 'Simple keys like foo'
+    match: '[A-Za-z_$][A-Za-z0-9_$-]*'
     name: 'variable.other.identifier.dust'
   number:
-    'match': '-?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?'
-    'name': 'constant.numeric.dust'
+    match: '-?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?'
+    name: 'constant.numeric.dust'
   path:
-    match: '[\\.A-Za-z_$][\\.A-Za-z0-9_$]*'
+    comment: 'Pathed keys like foo.bar and foo[1].bar'
+    match: '[\\.A-Za-z_$][\\.A-Za-z0-9_$\\[\\]-]*'
     name: 'variable.other.identifier.dust'
   special:
+    comment: 'Dust specials like {~n} and {~lb}'
     match: '\\{\\~[A-Za-z]+\\}'
     name: 'support.constant.special'
   filter:
+    comment: 'Filters attached to references, like |s and |et'
     match: '\\|[A-Za-z]+'
     name: 'support.constant.filter'
   context:
+    comment: 'Contexts attached to references, like :context'
     match: ':[A-Za-z0-9_$]+'
     name: 'variable.parameter.context'
   inline:
+    comment: 'Quoted entities like "strings" and "{inline} with string"'
     match: '(")([^"\\\\]*(?:\\\\.[^"\\\\]*)*)(")' # http://stackoverflow.com/a/5696141/938516
     captures:
       1:
@@ -146,6 +162,7 @@ repository:
         name: 'punctuation.definition.string.end'
     name: 'string.quoted.double.inline'
   param:
+    comment: 'params inside sections like foo="bar" and foo=ref and foo=-3.2'
     match: '([A-Za-z_$][A-Za-z0-9_$]*)(=)((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|[\\-\\.A-Za-z0-9_$^"]+)'
     captures:
       1:
