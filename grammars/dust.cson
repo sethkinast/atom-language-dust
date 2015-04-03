@@ -12,6 +12,12 @@ patterns: [
     include: '#reference'
   }
   {
+    include: '#section_start'
+  }
+  {
+    include: '#section_end'
+  }
+  {
     include: 'text.html.basic'
   }
 ]
@@ -21,10 +27,54 @@ repository:
     match: '\\{([\\.A-z_$][\\.A-z0-9_$]*)(\\|[A-z]+)?\\}'
     captures:
       1:
-        name: 'variable.other.reference_name'
+        patterns: [
+          {
+            include: '#identifier'
+          }
+        ]
       2:
-        name: 'support.constant.filter'
-    name: 'variable.other.reference'
+        patterns: [
+          {
+            include: '#filter'
+          }
+        ]
+    name: 'entity.name.tag'
+  section_start:
+    begin: '\\{([#?^<+@%]\\s*[\\.A-z_$][\\.A-z0-9_$]*)(:[A-z0-9_$]+)?'
+    beginCaptures:
+      1:
+        patterns: [
+          {
+            include: '#identifier'
+          }
+        ]
+      2:
+        patterns: [
+          {
+            include: '#context'
+          }
+        ]
+    #end: '\\/\\s*(\\1)?\\s*\\}'
+    end: '\\/?\\}'
+    #endCaptures:
+    #  1:
+    #    patterns: [
+    #      {
+    #        include: '#identifier'
+    #      }
+    #    ]
+    patterns: [
+      {
+        include: '#param'
+      }
+    ]
+    name: 'entity.name.tag.section.start.dust'
+  section_end:
+    match: '\\{\\s*\\/\\s*([\\.A-z_$][\\.A-z0-9_$]*)\\}'
+    name: 'entity.name.tag.section.end.dust'
+    captures:
+      1:
+        name: 'entity.name.function.dust'
   comment:
     begin: '\\{!'
     end: '!\\}'
@@ -32,17 +82,75 @@ repository:
   identifier:
     patterns: [
       {
-        include: '#dust_key'
+        include: '#control'
       }
       {
-        include: '#dust_path'
+        include: '#key'
+      }
+      {
+        include: '#path'
       }
     ]
+  control:
+    match: '[#?^<+@%]\\s*[\\.A-z_$][\\.A-z0-9_$]*'
+    name: 'entity.name.function.dust'
   key:
     match: '[A-z_$][A-z0-9_$]*'
-  literal:
-    match: '[^"]*'
+    name: 'variable.other.identifier'
+  #literal:
+  #  match: '[^"\\\\]*(?:\\.[^"\\\\]*)*'
+  number:
+    'match': '-?(?=[1-9]|0(?!\\d))\\d+(\\.\\d+)?([eE][+-]?\\d+)?'
+    'name': 'constant.numeric.dust'
   path:
-    match: '[A-z0-9_$\.]+'
+    match: '[\\.A-z_$][\\.A-z0-9_$]*'
+    name: 'variable.other.identifier'
   special:
-    match: '\{\~[A-z]\}'
+    match: '\\{\\~[A-z]\\}'
+    name: 'support.constant.special'
+  filter:
+    match: '\\|[A-z]+'
+    name: 'support.constant.filter'
+  context:
+    match: ':[A-z0-9_$]+'
+    name: 'variable.parameter.context'
+  inline:
+    match: '(")([^"\\\\]*(?:\\\\.[^"\\\\]*)*)(")' # http://stackoverflow.com/a/5696141/938516
+    captures:
+      1:
+        name: 'punctuation.definition.string.begin'
+      2:
+        patterns: [
+          {
+            include: '#reference'
+          },
+          {
+            include: '#special'
+          }
+        ]
+      3:
+        name: 'punctuation.definition.string.end'
+    name: 'string.quoted.double.inline'
+  param:
+    match: '([A-z_$][A-z0-9_$]*)(=)((?:"[^"\\\\]*(?:\\\\.[^"\\\\]*)*")|[\\-\\.A-z0-9_$^"]+)'
+    captures:
+      1:
+        patterns: [
+          {
+            include: '#key'
+          }
+        ]
+      2:
+        name: 'keyword.operator'
+      3:
+        patterns: [
+          {
+            include: '#number'
+          },
+          {
+            include: '#key'
+          },
+          {
+            include: '#inline'
+          }
+        ]
