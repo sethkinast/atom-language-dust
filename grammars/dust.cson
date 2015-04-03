@@ -46,15 +46,11 @@ repository:
     captures:
       2:
         patterns: [
-          {
-            include: '#identifier'
-          }
+          include: '#identifier'
         ]
       3:
         patterns: [
-          {
-            include: '#filter'
-          }
+          include: '#filter'
         ]
       1:
         name: 'meta.brace.start.dust'
@@ -66,29 +62,15 @@ repository:
     beginCaptures:
       1:
         patterns: [
-          {
-            include: '#identifier'
-          }
+          include: '#identifier'
         ]
       2:
         patterns: [
-          {
-            include: '#context'
-          }
+          include: '#context'
         ]
-    #end: '\\/\\s*(\\1)?\\s*\\}'
     end: '\\/?\\}'
-    #endCaptures:
-    #  1:
-    #    patterns: [
-    #      {
-    #        include: '#identifier'
-    #      }
-    #    ]
     patterns: [
-      {
-        include: '#param'
-      }
+      include: '#param'
     ]
   section_end:
     match: '\\{\\s*\\/\\s*([\\.A-Za-z_$][\\.A-Za-z0-9_$]*)\\}'
@@ -105,21 +87,15 @@ repository:
     captures:
       1:
         patterns: [
-          {
-            include: '#inline'
-          }
+          include: '#inline'
         ]
       2:
         patterns: [
-          {
-            include: '#context'
-          }
+          include: '#context'
         ]
       3:
         patterns: [
-          {
-            include: '#param'
-          }
+          include: '#param'
         ]
   comment:
     begin: '\\{!'
@@ -169,7 +145,7 @@ repository:
         patterns: [
           {
             include: '#reference'
-          },
+          }
           {
             include: '#special'
           }
@@ -182,9 +158,7 @@ repository:
     captures:
       1:
         patterns: [
-          {
-            include: '#key'
-          }
+          include: '#key'
         ]
       2:
         name: 'keyword.operator'
@@ -192,10 +166,10 @@ repository:
         patterns: [
           {
             include: '#number'
-          },
+          }
           {
             include: '#key'
-          },
+          }
           {
             include: '#inline'
           }
