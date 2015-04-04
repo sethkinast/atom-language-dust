@@ -1,6 +1,6 @@
 {
   "name": "language-dust-ng",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Dust.js template support in Atom. Provides enhancements over the Textmate bundle port.",
   "homepage": "http://dustjs.com/",
   "repository": "https://github.com/sethkinast/atom-language-dust.git",
