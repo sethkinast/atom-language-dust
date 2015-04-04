@@ -175,6 +175,9 @@ repository:
             include: '#number'
           }
           {
+            include: '#path'
+          }
+          {
             include: '#key'
           }
           {
