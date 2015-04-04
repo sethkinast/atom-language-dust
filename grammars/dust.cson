@@ -34,7 +34,7 @@ patterns: [
 
 repository:
   reference:
-    comment: 'Simple references like {foo} and {foo.bar} and {foo.bar:context}'
+    comment: 'Simple references like {foo} and {foo.bar} and {foo[1].bar} and {foo.bar|s|et}'
     match: '\\{([\\.A-Za-z_$][\\.A-Za-z0-9_$\\[\\]-]*)((?:\\|[A-Za-z]+)*)\\}'
     name: 'variable.other.reference.dust'
     captures:
@@ -106,10 +106,10 @@ repository:
         include: '#control'
       }
       {
-        include: '#key'
+        include: '#path'
       }
       {
-        include: '#path'
+        include: '#key'
       }
     ]
   helper:
